@@ -1,4 +1,5 @@
 # author: andrii budzan
+# finding min and max values in array with linear search algo
 
 array = [10, 44, 66, 12, 2, 77, 43]
 
