@@ -1,16 +1,16 @@
-create database performance_test;
-use database performance_test;
+create database perf_test;
 
-CREATE or replace TABLE transactions
+use database perf_test;
+
+create table transactions
 (
-
-    Transaction_Date DATE,
-    Customer_ID NUMBER,
-    Transaction_ID NUMBER,
-    Amount NUMBER
+    transaction_date date,
+    transaction_id integer,
+    customer_id string,
+    amount integer
 );
 
-CREATE OR REPLACE STAGE perf_stage url='s3://abdzn-snowflake-streaming/transactions';
+create or replace stage perf_stage url ='s3://snowflake-essentials/streaming_data_ingest/Transactions';
 
 list @perf_stage;
 
@@ -19,44 +19,58 @@ copy into transactions
     file_format = (type = csv field_delimiter = '|' skip_header = 1);
 
 
-CREATE or replace TABLE transactions_100
-(
+select count(*) from transactions;
 
-    Transaction_Date DATE,
-    Customer_ID NUMBER,
-    Transaction_ID NUMBER,
-    Amount NUMBER
+
+create table transactions_large
+(
+    transaction_date date,
+    transaction_id integer,
+    customer_id string,
+    amount integer
 );
 
-use warehouse as_wh;
-
-select * from transactions;
-
-select * from transactions_large;
-
-insert into transactions_100
-select * from transactions limit 100;
 
 insert into transactions_large
-select a.transaction_date + mod(random(), 1000), random(), a.customer_id, a.amount
-from transactions_100 a
-         cross join transactions_100 b
-         cross join transactions_100 c
-         cross join transactions_100 d;
+select a.transaction_date + mod(random(), 2000), random(), a.customer_id, a.amount
+from transactions a cross join transactions b cross join transactions c cross join transactions d;
 
 
-select count(*) from transactions_large where Transaction_Date = '2018-12-18';
+select count(*) from transactions_large;
 
 
-CREATE or replace TABLE transactions_100
+select count(*) from transactions_large where transaction_date = '2018-12-18';
+
+
+create table transactions_clustered_date
 (
+    transaction_date date,
+    transaction_id integer,
+    customer_id string,
+    amount integer
+)
+    cluster by (transaction_date);
 
-    Transaction_Date DATE,
-    Customer_ID NUMBER,
-    Transaction_ID NUMBER,
-    Amount NUMBER
-) cluster by (Transaction_Date)
-;
+
+insert into transactions_clustered_date select * from transactions_large;
 
 
-insert into t
+select count(*) from transactions_clustered_date where transaction_date = '2018-12-18';
+
+select count(*) from transactions_clustered_date where transaction_date = '2018-12-19';
+
+select count(*) from transactions_clustered_date where transaction_date between '2019-12-01' and '2019-12-31';
+
+
+create table transactions_clustered_month
+(
+    transaction_date date,
+    transaction_id integer,
+    customer_id string,
+    amount integer
+)
+    cluster by (date_trunc('MONTH', transaction_date));
+
+insert into transactions_clustered_month select * from transactions_large;
+
+select count(*) from transactions_clustered_month where date_trunc('MONTH', transaction_date) = '2018-11-01';
