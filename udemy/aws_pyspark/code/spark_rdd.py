@@ -11,7 +11,7 @@ sc = SparkContext.getOrCreate(conf=conf)
 
 # COMMAND ----------
 
-text = sc.textFile('sample.txt')
+text = sc.textFile('./FileStore/tables/sample.txt')
 
 # text - its a transformation, which currently doesnt make any transformations or operations
 # to perfrom this operation we need to `call` an action

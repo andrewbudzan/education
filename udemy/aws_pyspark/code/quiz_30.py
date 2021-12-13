@@ -2,7 +2,7 @@
 from pyspark import SparkConf, SparkContext
 conf = SparkConf().setAppName('Quiz_30')
 sc = SparkContext.getOrCreate(conf=conf)
-rdd = sc.textFile('quiz_30.txt')
+rdd = sc.textFile('./FileStore/tables/quiz_30.txt')
 
 # COMMAND ----------
 
