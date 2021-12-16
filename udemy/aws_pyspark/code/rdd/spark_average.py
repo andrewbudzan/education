@@ -30,5 +30,3 @@ rdd4 = rdd3.map(lambda x: (x[0], round(x[1][0] / x[1][1], ndigits=2)))
 rdd4.collect()
 
 # COMMAND ----------
-
-rdd2.
