@@ -2,7 +2,7 @@
 from pyspark import SparkContext, SparkConf
 conf = SparkConf().setAppName('Read File')
 sc = SparkContext.getOrCreate(conf=conf)
-rdd = sc.textFile('sample.txt')
+rdd = sc.textFile('./FileStore/tables/sample.txt')
 
 # COMMAND ----------
 

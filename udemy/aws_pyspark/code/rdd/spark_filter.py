@@ -2,7 +2,7 @@
 from pyspark import SparkConf, SparkContext
 conf = SparkConf().setAppName('flatmap')
 sc = SparkContext.getOrCreate(conf=conf)
-rdd = sc.textFile('sample.txt')
+rdd = sc.textFile('./FileStore/tables/sample.txt')
 
 # COMMAND ----------
 
